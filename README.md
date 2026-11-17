@@ -64,11 +64,11 @@ The 36 spell icons are shown below. Chat uses **40 × 40 px** icons. The chooser
 
 ![Quick Summon Icons Preview showing all 36 spell icons](docs/assets/spell-icons-preview.png)
 
-## Build and release
+## Build and contribute
 
 Run `python build_release.py` from the repository root. The `release/` directory receives the installable extension, the optional map token, and their SHA-256 checksums. The build uses Python’s standard library.
 
-For a new release, update the extension manifest, announcement, guides, and changelog together. Push the source commit and a matching `vX.Y.Z` tag to the SSH remote. GitHub Actions checks the tag against the manifest and publishes the release files. See [Release instructions](AGENTS.md).
+To contribute, fork the repository, make your changes in the fork, and open a pull request against `main`. The maintainer publishes releases.
 
 ## License
 

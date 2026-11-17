@@ -39,6 +39,10 @@ Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.18 loaded.** mesajı g
 
 Chat ikonları 40 × 40 px, seçim penceresindekiler 96 × 96 px ve Spiritual Weapon harita token’ı 256 × 256 px’dir.
 
-## Geliştirme
+## Derleme ve katkı
 
-`python build_release.py` ile `release/` klasörünü oluştur. Sürüm güncellemeleri SSH origin üzerinden commit ve `vX.Y.Z` etiketiyle yayımlanır. [Yayın akışı](AGENTS.md) · [MIT lisansı](LICENSE).
+`python build_release.py` komutu, kurulabilir eklentiyi, harita token’ını ve SHA-256 değerlerini `release/` klasörüne yazar.
+
+Katkıda bulunmak için depoyu forklayıp değişikliklerini kendi fork’unda yap ve `main` dalına pull request aç. Sürümleri proje sahibi yayımlar.
+
+[MIT lisansı](LICENSE).
