@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <windowclass name="quicksummon_dialog">
+    <frame>utilitybox</frame>
+    <windowmenu><nolink /></windowmenu>
+    <placement><size width="820" height="480" /><nosave /></placement>
+    <sizelimits><minimum width="820" height="355" /><dynamic /></sizelimits>
+    <script file="campaign/dialog.lua" />
+    <sheetdata>
+      <windowtitlebar_utilitybox name="title"><field>title</field></windowtitlebar_utilitybox>
+      <windowmenubar_utilitybox name="menubar" />
+      <label name="slotslabel">
+        <bounds>28,48,72,24</bounds>
+        <static>Use Slot:</static>
+      </label>
+      <button_text_toggle name="slot1">
+        <bounds>101,48,57,24</bounds>
+        <script>function onButtonPress() window.pickSlot(1); end</script>
+      </button_text_toggle>
+      <button_text_toggle name="slot2">
+        <bounds>160,48,57,24</bounds>
+        <script>function onButtonPress() window.pickSlot(2); end</script>
+      </button_text_toggle>
+      <button_text_toggle name="slot3">
+        <bounds>219,48,57,24</bounds>
+        <script>function onButtonPress() window.pickSlot(3); end</script>
+      </button_text_toggle>
+      <button_text_toggle name="slot4">
+        <bounds>278,48,57,24</bounds>
+        <script>function onButtonPress() window.pickSlot(4); end</script>
+      </button_text_toggle>
+      <button_text_toggle name="slot5">
+        <bounds>337,48,57,24</bounds>
+        <script>function onButtonPress() window.pickSlot(5); end</script>
+      </button_text_toggle>
+      <button_text_toggle name="slot6">
+        <bounds>396,48,57,24</bounds>
+        <script>function onButtonPress() window.pickSlot(6); end</script>
+      </button_text_toggle>
+      <button_text_toggle name="slot7">
+        <bounds>455,48,57,24</bounds>
+        <script>function onButtonPress() window.pickSlot(7); end</script>
+      </button_text_toggle>
+      <button_text_toggle name="slot8">
+        <bounds>514,48,57,24</bounds>
+        <script>function onButtonPress() window.pickSlot(8); end</script>
+      </button_text_toggle>
+      <button_text_toggle name="slot9">
+        <bounds>573,48,57,24</bounds>
+        <script>function onButtonPress() window.pickSlot(9); end</script>
+      </button_text_toggle>
+      <button_text_toggle name="ritual">
+        <bounds>634,48,55,24</bounds>
+        <script>function onButtonPress() window.pickSlot(0); end</script>
+      </button_text_toggle>
+      <genericcontrol name="spellicon">
+        <anchored width="96" height="96">
+          <right offset="-30" />
+          <top offset="36" />
+        </anchored>
+        <disabled />
+      </genericcontrol>
+      <stringcontrol name="upcastnotice">
+        <bounds>28,75,-134,21</bounds>
+        <font>sheettext</font>
+        <readonly />
+      </stringcontrol>
+      <stringcontrol name="message">
+        <bounds>28,97,-134,34</bounds>
+        <font>sheettext</font>
+        <multilinespacing>17</multilinespacing>
+        <readonly />
+      </stringcontrol>
+      <label name="nameheading">
+        <bounds>60,133,343,25</bounds>
+        <static>Name / Option</static>
+      </label>
+      <label name="typeheading">
+        <bounds>404,133,146,25</bounds>
+        <static>Creature Type</static>
+      </label>
+      <label name="crheading">
+        <bounds>555,133,65,25</bounds>
+        <static>CR</static>
+      </label>
+      <label name="countheading">
+        <bounds>638,133,102,25</bounds>
+        <static>Selected</static>
+      </label>
+      <windowlist name="rows">
+        <anchored>
+          <top offset="160" />
+          <left offset="28" />
+          <right offset="-34" />
+          <bottom offset="-113" />
+        </anchored>
+        <frame name="groupbox" offset="7,5,7,6" />
+        <class>quicksummon_row</class>
+        <sortby><field>index</field></sortby>
+      </windowlist>
+      <scrollbar>
+        <anchored to="rows" />
+        <target>rows</target>
+      </scrollbar>
+      <stringcontrol name="note">
+        <bounds>28,-100,-28,43</bounds>
+        <font>sheettext</font>
+        <multilinespacing>17</multilinespacing>
+        <readonly />
+      </stringcontrol>
+      <button_text name="refresh">
+        <bounds>28,-49,105,24</bounds>
+        <text>Refresh</text>
+        <script>function onButtonPress() window.send("refresh"); end</script>
+      </button_text>
+      <button_text name="randomize">
+        <invisible />
+        <bounds>143,-49,145,24</bounds>
+        <text>Select randomly</text>
+        <script>function onButtonPress() window.selectRandomly(); end</script>
+      </button_text>
+      <label name="selectionTotal">
+        <bounds>300,-49,210,24</bounds>
+        <invisible />
+      </label>
+      <button_text name="cancel">
+        <bounds>-246,-49,102,24</bounds>
+        <text>Cancel</text>
+        <script>function onButtonPress() window.send("cancel"); end</script>
+      </button_text>
+      <button_text name="confirm">
+        <bounds>-130,-49,102,24</bounds>
+        <text>Confirm</text>
+        <script>function onButtonPress() window.send("submit"); end</script>
+      </button_text>
+      <resize_utilitybox />
+    </sheetdata>
+  </windowclass>
+
+  <windowclass name="power_item_header" merge="join">
+    <script>
+      function onInit()
+        if super and super.onInit then super.onInit(); end
+        if QuickSummon.isManagedSpell(getDatabaseNode()) then upcast.setVisible(false); end
+      end
+      function onUpcastChanged()
+        if super and super.onUpcastChanged then super.onUpcastChanged(); end
+        if QuickSummon.isManagedSpell(getDatabaseNode()) then upcast.setVisible(false); end
+      end
+    </script>
+  </windowclass>
+
+  <windowclass name="quicksummon_row">
+    <sizelimits><minimum height="30" /></sizelimits>
+    <script file="campaign/row.lua" />
+    <sheetdata>
+      <linkcontrol name="npcshortcut">
+        <bounds>6,4,20,20</bounds>
+        <description field="display" />
+        <readonly />
+        <invisible />
+      </linkcontrol>
+      <stringfield name="display">
+        <bounds>32,1,337,27</bounds>
+        <font>sheettext</font>
+        <readonly />
+        <script>function onClickDown() window.add(1); return true; end</script>
+      </stringfield>
+      <stringfield name="creature">
+        <bounds>376,1,146,27</bounds>
+        <font>sheettext</font>
+        <readonly />
+        <script>function onClickDown() window.add(1); return true; end</script>
+      </stringfield>
+      <stringfield name="rating">
+        <bounds>527,1,67,27</bounds>
+        <font>sheettext</font>
+        <readonly />
+        <script>function onClickDown() window.add(1); return true; end</script>
+      </stringfield>
+      <button_text_sm name="less">
+        <bounds>596,3,26,24</bounds>
+        <text>-</text>
+        <script>function onButtonPress() window.add(-1); end</script>
+      </button_text_sm>
+      <label name="chosen">
+        <bounds>624,2,42,25</bounds>
+        <center />
+      </label>
+      <button_text_sm name="more">
+        <bounds>666,3,27,24</bounds>
+        <text>+</text>
+        <script>function onButtonPress() window.add(1); end</script>
+      </button_text_sm>
+    </sheetdata>
+  </windowclass>
+</root>
