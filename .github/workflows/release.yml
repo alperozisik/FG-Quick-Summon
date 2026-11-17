@@ -2,11 +2,17 @@ name: Publish Quick Summon
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v[0-9]*'
 
 permissions:
   contents: write
+
+concurrency:
+  group: quick-summon-release
+  cancel-in-progress: false
 
 jobs:
   publish:
@@ -14,13 +20,38 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
-      - name: Build release
-        run: python3 build_release.py --tag "$GITHUB_REF_NAME"
-      - name: Publish GitHub Release
+      - name: Find unpublished release tag
+        id: release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes \
-            --title "Quick Summon $GITHUB_REF_NAME" \
+          tag="v$(python3 -c 'from xml.etree import ElementTree; print(ElementTree.parse("extension.xml").findtext("properties/version"))')"
+          if [[ "$GITHUB_REF_TYPE" == tag && "$GITHUB_REF_NAME" != "$tag" ]]; then
+            echo "The pushed tag does not match the extension manifest."
+            exit 1
+          fi
+          if ! git show-ref --verify --quiet "refs/tags/$tag"; then
+            exit 0
+          fi
+          if gh release view "$tag" --json url >/dev/null 2>&1; then
+            exit 0
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: Build tagged release
+        if: steps.release.outputs.tag != ''
+        env:
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          git checkout --detach "refs/tags/$RELEASE_TAG"
+          python3 build_release.py --tag "$RELEASE_TAG"
+      - name: Publish GitHub Release
+        if: steps.release.outputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          gh release create "$RELEASE_TAG" --verify-tag --generate-notes \
+            --title "Quick Summon $RELEASE_TAG" \
             release/QuickSummon.ext release/Spiritual_Weapon.png release/SHA256SUMS.txt
