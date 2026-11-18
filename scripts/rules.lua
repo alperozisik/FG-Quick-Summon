@@ -131,7 +131,7 @@ local function registerProfiles()
     note="GM: apply the maximum HP cost to the caster, equal to the Magen CR, minimum 1.",
   })
   register("Spiritual Weapon", 2, {
-    mode="weapon", upcast=true, initiative="share", unique="spiritualweapon", minutes=1,
+    mode="weapon", upcast=true, initiative="share", unique="spiritualweapon", minutes=1, expireEnd=true,
     note="Place the token using the Combat Tracker. Use its Spiritual Weapon Strike bonus action to roll.",
   })
 end
@@ -181,7 +181,10 @@ function upcastNotice(p, slot)
       end
       return string.format("Upcast damage bonus: +%dd8.",bonus)
     end
-    return "A 3rd-level slot adds no damage. Upcast adds 1d8 per two levels above 2nd.",slot>p.level
+    if slot==3 then
+      return "Level 3: 1d8 + spellcasting modifier, same as level 2. Next increase: level 4.",true
+    end
+    return "Level 2: 1d8 + spellcasting modifier. +1d8 at slot levels 4, 6, and 8."
   end
   if p.level<9 and not canScale(p) then
     return "Casting with a higher-level slot grants no additional benefit.",slot>p.level

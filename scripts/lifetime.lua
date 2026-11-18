@@ -2,11 +2,15 @@ local deleting = {}
 local restSeen
 local deferredDeletes
 
-function add(node, minutes, rounds)
+function add(node, minutes, rounds, initiative)
   if not node or (not minutes and not rounds) then return end
   if DB.findNode(DB.getValue(node,"qs_timer","")) then return end
+  if initiative==nil then
+    initiative=DB.getValue(node,"qs_cast_init",0)
+    if DB.getValue(node,"qs_expire_end",0)==1 then initiative=initiative-0.1 end
+  end
   local effect=EffectManager.addEffectByTable(node,{
-    sName="Summoned Creature", nDuration=rounds or minutes*10, bSkipAnnounce=true,
+    sName="Summoned Creature", nDuration=rounds or minutes*10, nInit=initiative, bSkipAnnounce=true,
   })
   if effect then DB.setValue(node,"qs_timer","string",DB.getPath(effect)) end
 end
@@ -190,7 +194,9 @@ function onTabletopInit()
         local source=DB.findNode(DB.getValue(node,"qs_duration",""))
         if source then
           local rounds=EffectVarManager.getEffectVarFromNode(source,"nDuration",0)
-          if rounds>0 then QuickSummonLifetime.add(node,nil,rounds) end
+          if rounds>0 then
+            QuickSummonLifetime.add(node,nil,rounds,EffectVarManager.getEffectVarFromNode(source,"nInit",0))
+          end
         end
       end
     end

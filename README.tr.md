@@ -11,7 +11,7 @@
 3. Kampanya başlatıcısında **Quick Summon**’ı etkinleştir. GM tarafında kullanılacak NPC modüllerini yükle.
 4. `AFTERTURN` ve `SHARETURN` ile sıralamayı uygulamak için [Initiative Nanny](https://forge.fantasygrounds.com/shop/items/2089/view) eklentisini etkinleştir.
 
-Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.21 loaded.** mesajı görünür. Açık kampanyada paketi değiştirdikten sonra uygun zamanda `/reload` kullanabilirsin.
+Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.22 loaded.** mesajı görünür. Açık kampanyada paketi değiştirdikten sonra uygun zamanda `/reload` kullanabilirsin.
 
 ## Çağırma akışı
 
@@ -29,12 +29,13 @@ Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.21 loaded.** mesajı g
 - **Options → Quick Summon → Auto Assign Summoned NPC**, varsayılan **On** ayarıyla dost summon’ı caster’ı kontrol eden oyuncuya verir; CT’deki NPC sayfasını o oyuncuyla paylaşır ve oyuncunun ekranında **kilitli** açar.
 - Caster’ın initiative’i varsa büyünün kuralına göre bireysel zar, grup zarı veya caster’ın initiative değeri kullanılır.
 - **Find Familiar** ile gelen kayda `Familiar` efekti eklenir.
-- **Spiritual Weapon**, `SHARETURN` ile caster’ın turunu paylaşır. **Spiritual Weapon Strike** bonus action’ı NPC sayfası ve CT’de saldırı ve force hasarı atışları sunar. Üzerinde `Incapacitated` ve `NOREACTION` bulunur.
+- **Spiritual Weapon**, `SHARETURN` ile caster’ın turunu paylaşır. **Spiritual Weapon Strike** bonus action’ı NPC sayfası ve CT’de saldırı ve force hasarı atışları sunar. Üzerinde `Incapacitated` ve `NOREACTION` bulunur. Slot 2 ve 3 mesajları aynı temel 1d8 hasarı gösterir; slot 4, 6 ve 8’de birer d8 eklenir.
 - Ölçeklenen ruhlar AC, HP, caster spell attack, save DC ve proficiency değerlerini kullanır. Yüklü modüldeki stat bloğunun metin yapısı, aksiyon metninin ne kadarının otomatik ölçeklenebildiğini belirler.
 
 ## Süreler ve rest
 
 - Süreli summon’ın üzerinde **Summoned Creature** efekti bulunur. Bu efekt bittiğinde veya kaldırıldığında summon CT’den ve bağlı Pets kaydından silinir. Süre FG turları ve rest komutlarıyla ilerler; gerçek zaman sayacı değildir.
+- Sayaç initiative’i, reaksiyon cast’leri dahil, **cast başladığında CT’de aktif olan aktörden** alınır. Seçim penceresi açıkken tur değişse bile korunur. Spiritual Weapon tur sonunda bittiği için Initiative Adjust bu değerden **0,1** düşürülür: 13 → 12,9. Yeni cast’lerde uygulanır; mevcut sayaçların initiative’i korunur.
 - Short rest **1 saat**, long rest **8 saat** düşürür. Toplu rest ve caster’ın kendi sayfasından yapılan rest desteklenir. Toplu rest aynı sayacı iki kez azaltmaz.
 - Konsantrasyon bağlantısı caster’da kalır. Konsantrasyon kaybıyla hostile’a dönen yaratığın Summoned Creature efekti, **yaratık silinmeden** kaldırılır; kontrol DM’e geçer. Özel gecikmeli kaybolma durumları DM tarafından yönetilir.
 - Kalıcı yaratıklar, familiar ve steed süre sayacı almaz. Gate kapanınca getirilen yaratık kalır. Animate Dead/Create Undead kontrol süresi, yaratığın ömründen ayrıdır. Druid Grove koruyucularında olağan 24 saat kullanılır; kalıcı grove ayrı yönetilir.

@@ -40,6 +40,7 @@ EffectManager={
   addEffectByTable=function(node,data)
     serial=serial+1
     local e=make(node.path..".effects.e"..serial,node)
+    e.values.nInit=data.nInit or 0
     e.values.sName=data.sName
     e.values.nDuration=data.nDuration*(data.sUnits=="minute" and 10 or 1)
     node.effects[#node.effects+1]=e

@@ -565,6 +565,8 @@ local function addCombatant(cast,npc,source)
   DB.setValue(node,"qs_unique","string",p.unique or "")
   DB.setValue(node,"qs_cast","string",cast.id)
   DB.setValue(node,"qs_spell","string",p.name)
+  DB.setValue(node,"qs_cast_init","number",cast.durationInit or 0)
+  DB.setValue(node,"qs_expire_end","number",p.expireEnd and 1 or 0)
   DB.setValue(node,"locked","number",1)
   if p.scales then syncSummonActions(node) end
   DB.setValue(node,"qs_break_hostile","number",p.breaksHostile and 1 or 0)
@@ -638,7 +640,7 @@ local function resolve(cast, selected)
   if p.concentration then
     ActionSave.expireConcentrationEffects(actorRecord(cast))
     effect=EffectManager.addEffectByTable(source,{
-      sName=p.name.." (C)", nDuration=p.concentration, sUnits="minute", bSkipAnnounce=true,
+      sName=p.name.." (C)", nDuration=p.concentration, sUnits="minute", nInit=cast.durationInit or 0, bSkipAnnounce=true,
     })
   end
   if effect and not p.keepOnEnd then
@@ -731,6 +733,9 @@ local function begin(character,node,host)
   nextCast=nextCast+1
   local cast={id=tostring(os.time()).."-"..nextCast, character=character,
     power=node, profile=p, user=owner(character), option=1, localCaster=host}
+  -- Capture before chooser windows open: reactions can be cast on another actor's turn.
+  local active=CombatManager.getActiveCT()
+  cast.durationInit=active and DB.getValue(active,"initresult",0) or 0
   cast.ritual=DB.getValue(node,"ritual",0)==1
   cast.die=p.randomGroups and math.random(6)
   casts[path]=cast

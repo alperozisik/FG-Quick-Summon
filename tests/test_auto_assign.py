@@ -84,8 +84,8 @@ local function check(enabled,owner,faction,expected,failed,usePets)
       return pet
     end}
   else Pets=nil end
-  local result=add({character=character,id="cast",profile={faction=faction}}, {}, nil)
-  assert(result==ct and values.locked==1)
+  local result=add({character=character,id="cast",durationInit=13,profile={faction=faction}}, {}, nil)
+  assert(result==ct and values.locked==1 and values.qs_cast_init==13)
   assert(opens==expected)
   assert(#shares==(failed and 0 or expected))
   if expected==1 then

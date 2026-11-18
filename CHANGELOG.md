@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.22] - 2026-11-18
+
+- Capture duration initiative from the active Combat Tracker actor when a cast starts, preserving it through chooser steps and reaction casts.
+- Set Summoned Creature Initiative Adjust to that snapshot; Spiritual Weapon uses a 0.1 offset for turn-end expiration. Align newly created caster concentration effects with the same cast-time initiative. Existing timers retain their prior initiative.
+- Correct Spiritual Weapon slot 2/3 notices: both use the base 1d8; damage increases by another d8 at slots 4, 6, and 8. Keep notices short enough for the chooser.
+
 ## [0.1.21] - 2026-11-18
 
 - Restore Spiritual Weapon’s Incapacitated effect while retaining NOREACTION.
@@ -35,3 +41,5 @@ First GitHub release.
 [0.1.20]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.20
 
 [0.1.21]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.21
+
+[0.1.22]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.22
