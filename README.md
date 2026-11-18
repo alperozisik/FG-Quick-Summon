@@ -13,7 +13,7 @@ Summon and manage creatures from the **Actions** tab in **Fantasy Grounds Unity 
 3. Enable **Quick Summon** in the campaign launcher. Use a **5E Legacy** campaign and load the NPC modules you want to use on the GM side.
 4. Enable [Initiative Nanny](https://forge.fantasygrounds.com/shop/items/2089/view) if you want `AFTERTURN` and `SHARETURN` to control initiative order.
 
-The chat announces **Quick Summon v0.1.18 loaded.** with the extension icon. For updates to an open campaign, replace the package and use `/reload` when you are ready.
+The chat announces **Quick Summon v0.1.19 loaded.** with the extension icon. For updates to an open campaign, replace the package and use `/reload` when you are ready.
 
 ## Casting a spell
 
@@ -34,7 +34,7 @@ The chat announces **Quick Summon v0.1.18 loaded.** with the extension icon. For
 
 ## Combat Tracker and ownership
 
-- **Options → Quick Summon → Auto Assign Summoned NPC** defaults to **On**. Friendly summons are assigned to the player who controls the caster. Set it to **Off** to assign them manually.
+- **Options → Quick Summon → Auto Assign Summoned NPC** defaults to **On**. Friendly summons are assigned to the player who controls the caster, and their live Combat Tracker NPC sheet is shared with and opened for that player. Set it to **Off** to assign them manually.
 - If the caster already has initiative, the summon uses the spell’s initiative behavior. Spells can roll individually, roll once for the summoned group, or use the caster’s value. Quick Summon supplies the caster link for `AFTERTURN` and `SHARETURN` effects.
 - **Find Familiar** adds a persistent `Familiar` effect to the new CT entry.
 - **Spiritual Weapon** shares the caster’s turn through `SHARETURN`. Its **Spiritual Weapon Strike** bonus action appears in the NPC sheet and CT with the caster’s spell attack bonus, force damage, and Legacy upcast scaling. Its movement is 20 ft. and the CT entry carries `NOREACTION`. The caster must be on the tracker.

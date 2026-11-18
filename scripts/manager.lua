@@ -572,6 +572,9 @@ local function addCombatant(cast,npc,source)
     DB.setValue(node,"NPCowner","string",user)
     DB.addHolder(node,user,true)
     DB.addHolder(record,user,false)
+    -- Share the live CT sheet, as when the GM drops its link onto a player portrait.
+    local window=Interface.openWindow("npc",node)
+    if window then window.share(user) end
   end
   return node
 end
