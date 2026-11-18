@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root version="4.1">
-  <announcement text="Quick Summon v0.1.19 loaded." font="emotefont" icon="qs_extension_icon" />
+  <announcement text="Quick Summon v0.1.20 loaded." font="emotefont" icon="qs_extension_icon" />
   <properties>
     <name>Quick Summon</name>
-    <version>0.1.19</version>
+    <version>0.1.20</version>
     <author>Quick Summon</author>
     <description>Spell-driven summoning for Fantasy Grounds 5E Legacy.</description>
     <ruleset><name>5E</name></ruleset>

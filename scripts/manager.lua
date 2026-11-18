@@ -547,11 +547,19 @@ local function addCombatant(cast,npc,source)
   if not record then return end
   local p=cast.profile
   local faction=p.faction or (source and DB.getValue(source,"friendfoe","friend")) or "friend"
+  -- Pets owns cohorts under the caster; use that record as the actual CT source.
+  local pet
+  if Pets and type(Pets.addCohort)=="function" and faction=="friend"
+      and OptionsManager.isOption(autoAssignOption,"on") then
+    pet=Pets.addCohort(cast.character,record)
+    if pet then DB.deleteNode(record); record=pet end
+  end
   local data={nodeRecord=record,sClass="npc",sRecordType="npc",sFaction=faction,bQuickSummon=true}
   CombatRecordManager.onRecordTypeEvent("npc",data)
   local node=data.nodeCT
   if not node then DB.deleteNode(record); return end
   DB.setValue(node,"qs_record","string",DB.getPath(record))
+  DB.setValue(node,"qs_pet","number",pet and 1 or 0)
   DB.setValue(node,"qs_owner","string",DB.getPath(cast.character))
   DB.setValue(node,"qs_unique","string",p.unique or "")
   DB.setValue(node,"qs_cast","string",cast.id)
@@ -573,7 +581,7 @@ local function addCombatant(cast,npc,source)
     DB.addHolder(node,user,true)
     DB.addHolder(record,user,false)
     -- Share the live CT sheet, as when the GM drops its link onto a player portrait.
-    local window=Interface.openWindow("npc",node)
+    local window=Interface.openWindow("npc",pet or node)
     if window then window.share(user) end
   end
   return node
@@ -851,6 +859,21 @@ local function onView(msg)
   openPending()
 end
 
+local function detachPet(node)
+  if DB.getValue(node,"qs_pet",0)~=1 then return end
+  local pet=DB.findNode(DB.getValue(node,"qs_record",""))
+  if pet then
+    -- A hostile summon must no longer inherit access from the player character.
+    local record=DB.createChild(DB.createNode("npc"))
+    DB.copyNode(pet,record)
+    DB.setValue(node,"qs_record","string",DB.getPath(record))
+    DB.setValue(node,"link","windowreference","npc","")
+    DB.setValue(node,"sourcelink","windowreference","npc",DB.getPath(record))
+    DB.deleteNode(pet)
+  end
+  DB.setValue(node,"qs_pet","number",0)
+end
+
 local function onEffectDeleted(node)
   local path=DB.getPath(node)
   -- CoreRPG deletes a normally expiring effect with one round still stored.
@@ -865,6 +888,7 @@ local function onEffectDeleted(node)
       DB.setValue(entry,"qs_duration","string","")
       say("The GM resolves any delayed disappearance for "..DB.getValue(entry,"name","the summon")..".",spell)
     elseif early and DB.getValue(entry,"qs_break_hostile",0)==1 then
+      detachPet(entry)
       DB.setValue(entry,"friendfoe","string","foe")
       DB.setValue(entry,"qs_duration","string","")
       local character=DB.findNode(DB.getValue(entry,"qs_owner",""))

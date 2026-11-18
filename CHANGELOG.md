@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.20] - 2026-11-18
+
+- Integrate newly created, auto-assigned friendly summons with the optional Pets extension, using the caster’s cohort record as the Combat Tracker source.
+- Remove that Pets record when the summon leaves the tracker; detach hostile summons from Pets while retaining GM control.
+- Continue the normal summon and sheet-sharing workflow when Pets is absent.
+
 ## [0.1.19] - 2026-11-18
 
 - Fix Auto Assign Summoned NPC granting access without opening the NPC sheet for the caster’s player. The live Combat Tracker sheet is now shared directly with that player using Fantasy Grounds’ standard window sharing.
@@ -16,3 +22,5 @@ First GitHub release.
 [0.1.18]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.18
 
 [0.1.19]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.19
+
+[0.1.20]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.20
