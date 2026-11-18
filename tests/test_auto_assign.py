@@ -4,23 +4,10 @@ Run: python tests/test_auto_assign.py [path/to/lua5.1.dll]
 The harness replaces FG services; it does not connect to a campaign or client.
 """
 
-import ctypes
 from pathlib import Path
-import sys
-
+from lua_runtime import run
 
 ROOT = Path(__file__).resolve().parents[1]
-DLL = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(
-    r"C:\Program Files\SmiteWorks\Fantasy Grounds\FantasyGrounds_Data\Plugins\x86_64\lua5.1.dll"
-)
-lua = ctypes.CDLL(str(DLL))
-lua.luaL_newstate.restype = ctypes.c_void_p
-lua.luaL_openlibs.argtypes = [ctypes.c_void_p]
-lua.luaL_loadbuffer.argtypes = [ctypes.c_void_p, ctypes.c_char_p, ctypes.c_size_t, ctypes.c_char_p]
-lua.lua_pcall.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_int]
-lua.lua_tolstring.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.POINTER(ctypes.c_size_t)]
-lua.lua_tolstring.restype = ctypes.c_char_p
-lua.lua_close.argtypes = [ctypes.c_void_p]
 
 harness = r'''
 local function find(fn, name, seen)
@@ -98,7 +85,7 @@ local function check(enabled,owner,faction,expected,failed,usePets)
     end}
   else Pets=nil end
   local result=add({character=character,id="cast",profile={faction=faction}}, {}, nil)
-  assert(result==ct)
+  assert(result==ct and values.locked==1)
   assert(opens==expected)
   assert(#shares==(failed and 0 or expected))
   if expected==1 then
@@ -148,16 +135,16 @@ deleted,values,holders,shares,opens={},{},{},{},0
 assert(add({character=character,id="cast",profile={faction="friend"}}, {}, nil)==nil)
 assert(#deleted==2 and deleted[1]==record and deleted[2]==pet)
 assert(opens==0 and #holders==0)
+-- Newly created Spiritual Weapon keeps both non-threatening actor effects.
+addFails=false
+check(false,"Alice","friend",0)
+local labels={}
+EffectManager={addEffectByTable=function(node,data)
+  assert(node==ct); labels[data.sName]=true
+end}
+assert(add({character=character,id="cast",profile={faction="friend"}}, {weapon=true}, nil)==ct)
+assert(labels.Incapacitated and labels.NOREACTION and values.locked==1)
 '''
 source = (ROOT / "scripts/manager.lua").read_bytes() + b"\n" + harness.encode()
-state = lua.luaL_newstate()
-try:
-    lua.luaL_openlibs(state)
-    status = lua.luaL_loadbuffer(state, source, len(source), b"auto_assign_regression")
-    if not status:
-        status = lua.lua_pcall(state, 0, 0, 0)
-    if status:
-        raise RuntimeError(lua.lua_tolstring(state, -1, None).decode())
-finally:
-    lua.lua_close(state)
+run(source, "auto_assign_regression")
 print("PASS: auto assignment, optional Pets, removal, hostile detachment and failed insertion (FG Lua 5.1; mocked FG services)")

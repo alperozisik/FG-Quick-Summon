@@ -485,6 +485,7 @@ local function buildRecord(cast,npc)
   end
   DB.setValue(clone,"name","string",p.nameOverride or npc.name)
   DB.setValue(clone,"version","string","Legacy")
+  DB.setValue(clone,"locked","number",1)
   if p.scales or p.statBonus then
     local atk, dc, ability, pb=casterStats(cast)
     if p.scales then
@@ -563,6 +564,8 @@ local function addCombatant(cast,npc,source)
   DB.setValue(node,"qs_owner","string",DB.getPath(cast.character))
   DB.setValue(node,"qs_unique","string",p.unique or "")
   DB.setValue(node,"qs_cast","string",cast.id)
+  DB.setValue(node,"qs_spell","string",p.name)
+  DB.setValue(node,"locked","number",1)
   if p.scales then syncSummonActions(node) end
   DB.setValue(node,"qs_break_hostile","number",p.breaksHostile and 1 or 0)
   DB.setValue(node,"qs_manual_expiration","number",p.manualExpiration and 1 or 0)
@@ -570,6 +573,7 @@ local function addCombatant(cast,npc,source)
   DB.setValue(node,"friendfoe","string",faction)
   applyInitiative(cast,node,source)
   if npc.weapon then
+    EffectManager.addEffectByTable(node,{sName="Incapacitated",nDuration=0,bSkipAnnounce=true})
     EffectManager.addEffectByTable(node,{sName="NOREACTION",nDuration=0,bSkipAnnounce=true})
   elseif p.unique=="familiar" then
     EffectManager.addEffectByTable(node,{sName="Familiar",nDuration=0,bSkipAnnounce=true})
@@ -636,16 +640,17 @@ local function resolve(cast, selected)
     effect=EffectManager.addEffectByTable(source,{
       sName=p.name.." (C)", nDuration=p.concentration, sUnits="minute", bSkipAnnounce=true,
     })
-  elseif p.minutes and source then
-    effect=EffectManager.addEffectByTable(source,{
-      sName=p.name.." (Quick Summon)",nDuration=p.minutes,sUnits="minute",bSkipAnnounce=true,
-    })
   end
   if effect and not p.keepOnEnd then
     local duration=DB.getPath(effect)
     for _,node in ipairs(added) do DB.setValue(node,"qs_duration","string",duration) end
-  elseif not effect and (p.concentration or p.minutes) then
+  elseif not effect and p.concentration then
     say(p.name..": track duration manually.",p.name)
+  end
+  if not p.keepOnEnd then
+    for _,node in ipairs(added) do
+      QuickSummonLifetime.add(node,p.concentration or p.minutes)
+    end
   end
   for _,node in ipairs(prior) do CombatManager.deleteCombatant(node) end
   PowerManager5E.setSpellUpcast(cast.power,cast.slot==0 and -1 or cast.slot-p.level)
@@ -762,6 +767,12 @@ local function dispatch(character,command,host)
   local fields={}
   for value in (command.."|"):gmatch("(.-)|") do fields[#fields+1]=value end
   local op=fields[1]
+  if op=="rest" then
+    if fields[2]=="short" or fields[2]=="long" then
+      QuickSummonLifetime.restCaster(character,fields[2])
+    end
+    return
+  end
   if op=="start" then
     if not host and owner(character)=="" then return end
     if fields[2] and fields[2]~="" then begin(character,DB.findNode(fields[2]),host) end
@@ -826,6 +837,12 @@ local function send(character,command)
   end
 end
 
+function notifySummonRest(character,kind)
+  if character and (kind=="short" or kind=="long") then
+    send(character,"rest|"..kind)
+  end
+end
+
 function submit(node,op,slot,indices)
   if not node or DB.getValue(node,"state","")~="open" then return end
   local character=DB.findNode(DB.getValue(node,"character",""))
@@ -886,10 +903,12 @@ local function onEffectDeleted(node)
   for _,entry in ipairs(linked) do
     if early and DB.getValue(entry,"qs_manual_expiration",0)==1 then
       DB.setValue(entry,"qs_duration","string","")
+      QuickSummonLifetime.clear(entry)
       say("The GM resolves any delayed disappearance for "..DB.getValue(entry,"name","the summon")..".",spell)
     elseif early and DB.getValue(entry,"qs_break_hostile",0)==1 then
       detachPet(entry)
       DB.setValue(entry,"friendfoe","string","foe")
+      QuickSummonLifetime.clear(entry)
       DB.setValue(entry,"qs_duration","string","")
       local character=DB.findNode(DB.getValue(entry,"qs_owner",""))
       local user=DB.getValue(entry,"qs_assigned_user",character and owner(character) or "")

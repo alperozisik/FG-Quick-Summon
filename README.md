@@ -13,7 +13,7 @@ Summon and manage creatures from the **Actions** tab in **Fantasy Grounds Unity 
 3. Enable **Quick Summon** in the campaign launcher. Use a **5E Legacy** campaign and load the NPC modules you want to use on the GM side.
 4. Enable [Initiative Nanny](https://forge.fantasygrounds.com/shop/items/2089/view) if you want `AFTERTURN` and `SHARETURN` to control initiative order.
 
-The chat announces **Quick Summon v0.1.20 loaded.** with the extension icon. For updates to an open campaign, replace the package and use `/reload` when you are ready.
+The chat announces **Quick Summon v0.1.21 loaded.** with the extension icon. For updates to an open campaign, replace the package and use `/reload` when you are ready.
 
 ## Casting a spell
 
@@ -35,11 +35,19 @@ The chat announces **Quick Summon v0.1.20 loaded.** with the extension icon. For
 ## Combat Tracker and ownership
 
 - With **Pets** loaded and auto assignment On, friendly summons are added to the caster’s Pets list as the actual NPC record linked to the tracker. Removing a summon from the tracker also removes its Pets entry. A summon that becomes hostile on concentration loss leaves Pets and remains under GM control. Pets is optional; the normal workflow works without it. This applies to newly created summons.
-- **Options → Quick Summon → Auto Assign Summoned NPC** defaults to **On**. Friendly summons are assigned to the player who controls the caster, and their Combat Tracker-linked NPC sheet is shared with and opened for that player. Set it to **Off** to assign them manually.
+- **Options → Quick Summon → Auto Assign Summoned NPC** defaults to **On**. Friendly summons are assigned to the player who controls the caster, and their Combat Tracker-linked NPC sheet is shared with and opened for that player in its locked state. Set it to **Off** to assign them manually.
 - If the caster already has initiative, the summon uses the spell’s initiative behavior. Spells can roll individually, roll once for the summoned group, or use the caster’s value. Quick Summon supplies the caster link for `AFTERTURN` and `SHARETURN` effects.
 - **Find Familiar** adds a persistent `Familiar` effect to the new CT entry.
-- **Spiritual Weapon** shares the caster’s turn through `SHARETURN`. Its **Spiritual Weapon Strike** bonus action appears in the NPC sheet and CT with the caster’s spell attack bonus, force damage, and Legacy upcast scaling. Its movement is 20 ft. and the CT entry carries `NOREACTION`. The caster must be on the tracker.
+- **Spiritual Weapon** shares the caster’s turn through `SHARETURN`. Its **Spiritual Weapon Strike** bonus action appears in the NPC sheet and CT with the caster’s spell attack bonus, force damage, and Legacy upcast scaling. Its movement is 20 ft. and the CT entry carries `Incapacitated` and `NOREACTION`. The caster must be on the tracker.
 - Scaled spirits use the selected slot for AC and hit points and take their spell attack bonus, save DC, and proficiency from the caster. How much action text can be scaled depends on the module’s stat block wording.
+
+## Summon duration and rests
+
+- A temporary summon carries a **Summoned Creature** effect with its remaining duration in rounds. Expiring or removing this effect dismisses the summon from the Combat Tracker and removes its linked Pets record. Duration advances through FG turns and rest commands, rather than real-world elapsed time.
+- Short rest subtracts **1 hour**; long rest subtracts **8 hours**. Both party rest and the caster’s individual rest are supported, including a rest started on the player’s character sheet. A party rest decrements each timer once.
+- Concentration remains linked to the caster. If concentration loss turns a creature hostile, its Summoned Creature effect is removed **without dismissing it**, and the GM takes over. Special delayed disappearance remains a GM ruling.
+- Permanent creations, familiars, and steeds do not receive a temporary lifetime timer. A creature brought through Gate stays when the portal ends. Animate Dead/Create Undead control limits are distinct from creature lifetimes and remain manual. Druid Grove guardians receive the ordinary 24-hour grove duration; the GM handles permanent groves separately.
+- On reload, existing managed summon sheets are locked, Spiritual Weapon regains a missing Incapacitated effect, and any existing linked duration is transferred to a Summoned Creature timer using its remaining rounds.
 
 ## Supported spells
 

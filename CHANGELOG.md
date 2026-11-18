@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.21] - 2026-11-18
+
+- Restore Spiritual Weapon’s Incapacitated effect while retaining NOREACTION.
+- Lock summon NPC sheets before sharing, including Pets-linked records. Repair existing managed sheets on reload.
+- Add a Summoned Creature duration effect to temporary summons; its expiration removes the CT entry and linked Pets record.
+- Apply one-hour short rests and eight-hour long rests to summon timers, including player-initiated caster rests, without double-counting party rests.
+- Remove the duration effect without dismissing a summon when concentration loss makes it hostile; retain manual handling for delayed disappearance.
+- Preserve remaining rounds when migrating existing duration links. Keep permanent creatures and Gate arrivals outside lifetime expiration; give ordinary Druid Grove guardians a 24-hour timer.
+
 ## [0.1.20] - 2026-11-18
 
 - Integrate newly created, auto-assigned friendly summons with the optional Pets extension, using the caster’s cohort record as the Combat Tracker source.
@@ -24,3 +33,5 @@ First GitHub release.
 [0.1.19]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.19
 
 [0.1.20]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.20
+
+[0.1.21]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.21

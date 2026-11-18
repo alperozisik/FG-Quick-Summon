@@ -120,7 +120,7 @@ local function registerProfiles()
     note="Confirm there are enough eligible objects.",
   })
   register("Druid Grove", 6, {
-    mode="fixed", names={"Awakened Tree"}, chooser="gm", count=4, manualExpiration=true,
+    mode="fixed", names={"Awakened Tree"}, chooser="gm", count=4, minutes=1440, manualExpiration=true,
     note="Grove Guardians option only. Confirm eligible trees and track the grove duration.",
   })
   register("Create Homunculus", 6, {
