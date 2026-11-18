@@ -29,7 +29,7 @@ local function registerProfiles()
 
   register("Conjure Elemental", 5, {
     mode="catalog", chooser="gm", creature="Elemental", cap=5, capStep=1,
-    forms={"Air","Earth","Fire","Water"}, concentration=60, initiative="roll", breaksHostile=true,
+    forms={"Air","Earth","Fire","Water"}, elementalForms=true, concentration=60, initiative="roll", breaksHostile=true,
     note="GM: choose an elemental appropriate to the selected terrain and confirm placement.",
   })
   register("Conjure Fey", 6, {
@@ -223,12 +223,43 @@ function options(p, level, index, die, existingFamiliar)
   return count, cap, p.budget and p.budget+extra*p.countStep
 end
 
-function eligibility(p, npc, cap)
+local elementalFamilies={
+  ["invisible stalker"]="air", djinni="air", djinn="air",
+  ["galeb duhr"]="earth", gargoyle="earth", xorn="earth", dao="earth", ["flail snail"]="earth",
+  azer="fire", salamander="fire", efreeti="fire", efreet="fire",
+  ["water weird"]="water", marid="water",
+  ["dust mephit"]="air earth", ["ice mephit"]="air water", ["smoke mephit"]="air fire",
+  ["magma mephit"]="earth fire", ["mud mephit"]="earth water", ["steam mephit"]="fire water",
+}
+
+local function containsWords(text,words)
+  return (" "..text.." "):find(" "..words.." ",1,true)~=nil
+end
+
+function matchesElement(npc,element)
+  element=normalize(element)
+  -- Explicit type tags take priority over a creature's display name.
+  local typed=normalize(npc.fullType)
+  local name=npc.normalized or normalize(npc.name)
+  for _,text in ipairs({typed,name}) do
+    local tagged=false
+    for _,tag in ipairs({"air","earth","fire","water"}) do
+      if containsWords(text,tag) then tagged=true end
+    end
+    if tagged then return containsWords(text,element) end
+  end
+  -- Family aliases are exact: a Frost Salamander is not an ordinary Salamander.
+  local elements=elementalFamilies[name:gsub(" legacy$","")]
+  return elements and containsWords(elements,element) or false
+end
+
+function eligibility(p, npc, cap, option)
   if npc.isTemplate or npc.isSwarm then return false end
   if cap and (not npc.cr or npc.cr > cap) then return false end
   if p.creature and not ("/"..p.creature:lower().."/"):find("/"..npc.creature:lower().."/",1,true) then
     return false
   end
+  if p.elementalForms and not matchesElement(npc,p.forms[option or 1]) then return false end
   return not p.subtype or npc.fullType:lower():match("%f[%a]"..p.subtype.."%f[%A]") ~= nil
 end
 

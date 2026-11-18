@@ -11,7 +11,7 @@
 3. Kampanya başlatıcısında **Quick Summon**’ı etkinleştir. GM tarafında kullanılacak NPC modüllerini yükle.
 4. `AFTERTURN` ve `SHARETURN` ile sıralamayı uygulamak için [Initiative Nanny](https://forge.fantasygrounds.com/shop/items/2089/view) eklentisini etkinleştir.
 
-Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.22 loaded.** mesajı görünür. Açık kampanyada paketi değiştirdikten sonra uygun zamanda `/reload` kullanabilirsin.
+Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.23 loaded.** mesajı görünür. Açık kampanyada paketi değiştirdikten sonra uygun zamanda `/reload` kullanabilirsin.
 
 ## Çağırma akışı
 
@@ -22,6 +22,8 @@ Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.22 loaded.** mesajı g
 - **Refresh**, modülleri ve slot durumunu yeniden okur. Penceredeki aday seçimleri sıfırlanır. **Select randomly**, en az iki geçerli aday arasından seçim yapar. **Animate Objects** için mümkün olan en yüksek boyut bütçesini doldurur.
 - **Confirm** ile yaratıklar CT’ye eklenir ve kullanılan slot chat’te bildirilir. Uygunsa konsantrasyon veya süre efekti eklenir. GM token’ı CT’den haritaya sürükler.
 - **Cancel** veya pencereyi kapatma, bekleyen çağırmayı iptal eder. Counterspell’i masanın normal akışında yönet.
+
+**Conjure Elemental**, DM listesini oyuncunun seçtiği Air/Earth/Fire/Water elementine ve slotun CR sınırına göre filtreler. Element etiketi, adında element geçen kayıtlar ve bilinen Legacy aileleri desteklenir. Elementi belirlenemeyen özel kayıtlar gösterilmez; bunlara `Elemental (air)` gibi bir type etiketi verilebilir. Conjure Minor Elementals bundan etkilenmez.
 
 ## Combat Tracker
 
@@ -37,6 +39,7 @@ Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.22 loaded.** mesajı g
 - Süreli summon’ın üzerinde **Summoned Creature** efekti bulunur. Bu efekt bittiğinde veya kaldırıldığında summon CT’den ve bağlı Pets kaydından silinir. Süre FG turları ve rest komutlarıyla ilerler; gerçek zaman sayacı değildir.
 - Sayaç initiative’i, reaksiyon cast’leri dahil, **cast başladığında CT’de aktif olan aktörden** alınır. Seçim penceresi açıkken tur değişse bile korunur. Spiritual Weapon tur sonunda bittiği için Initiative Adjust bu değerden **0,1** düşürülür: 13 → 12,9. Yeni cast’lerde uygulanır; mevcut sayaçların initiative’i korunur.
 - Short rest **1 saat**, long rest **8 saat** düşürür. Toplu rest ve caster’ın kendi sayfasından yapılan rest desteklenir. Toplu rest aynı sayacı iki kez azaltmaz.
+- **Conjure Elemental** ve **Conjure Fey** için caster’ın short/long rest’i önce konsantrasyonu bozar: yaratık CT’de hostile olarak kalır, Summoned Creature sayacı kaldırılır ve Pets kaydı silinir. Toplu rest’in önce summon’a uğraması sonucu değiştirmez.
 - Konsantrasyon bağlantısı caster’da kalır. Konsantrasyon kaybıyla hostile’a dönen yaratığın Summoned Creature efekti, **yaratık silinmeden** kaldırılır; kontrol DM’e geçer. Özel gecikmeli kaybolma durumları DM tarafından yönetilir.
 - Kalıcı yaratıklar, familiar ve steed süre sayacı almaz. Gate kapanınca getirilen yaratık kalır. Animate Dead/Create Undead kontrol süresi, yaratığın ömründen ayrıdır. Druid Grove koruyucularında olağan 24 saat kullanılır; kalıcı grove ayrı yönetilir.
 - `/reload`, mevcut summon sayfalarını kilitler ve Spiritual Weapon’ın eksik Incapacitated efektini tamamlar. Eski süre efekti bulunan summon’lara, kalan tur sayısı korunarak yeni sayaç eklenir.

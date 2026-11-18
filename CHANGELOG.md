@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.23] - 2026-11-18
+
+- Filter Conjure Elemental GM candidates by the caster’s selected element, retaining type, CR/upcast, swarm and template restrictions. Support explicit element tags, element names, and known Legacy elemental families; omit unclassified records.
+- Display the chosen element in the GM selection message and empty-list notice. Leave other elemental spells unchanged.
+- Fix caster rests dismissing Conjure Elemental/Conjure Fey before control can break. Short and long rests now make these creatures hostile, remove their lifetime timer, and preserve the CT entry, including summon-first party-rest order and player-initiated rests.
+
 ## [0.1.22] - 2026-11-18
 
 - Capture duration initiative from the active Combat Tracker actor when a cast starts, preserving it through chooser steps and reaction casts.
@@ -43,3 +49,5 @@ First GitHub release.
 [0.1.21]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.21
 
 [0.1.22]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.22
+
+[0.1.23]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.23

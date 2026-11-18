@@ -83,10 +83,29 @@ local function advanceOwned(actor,kind,includeSource)
   for _,source in pairs(sources) do advanceTimer(source,actor,kind) end
 end
 
+local function breakRestConcentration(actor)
+  local caster=ActorManager.getCreatureNode(ActorManager.resolveActor(actor))
+  local ownerPath=caster and DB.getPath(caster) or ""
+  local sources={}
+  for _,node in pairs(CombatManager.getCombatantNodes()) do
+    if ownerPath~="" and DB.getValue(node,"qs_owner","")==ownerPath
+        and DB.getValue(node,"qs_break_hostile",0)==1 then
+      local source=DB.findNode(DB.getValue(node,"qs_duration",""))
+      if source then sources[DB.getPath(source)]=source end
+    end
+  end
+  for _,source in pairs(sources) do
+    -- Rest ends control before elapsed-time expiration. The creature stays hostile.
+    DB.setValue(source,"qs_rest_break","number",1)
+    EffectManager.expireEffectByNode(DB.getChild(source,"..."),source)
+  end
+end
+
 function restCaster(character,kind)
   if not Session.IsHost then return end
   local outer=restSeen
   restSeen=restSeen or {}
+  breakRestConcentration(character)
   advanceOwned(character,kind,true)
   restSeen=outer
 end
@@ -126,6 +145,10 @@ function onInit()
   EffectManagerD20.clearRestExpiringEffect=function(effect,actor,kind)
     local node=DB.getChild(effect,"...")
     if node and DB.getValue(node,"qs_timer","")==DB.getPath(effect) then
+      -- A party rest can visit the summon before its caster. Let the caster's
+      -- rest break concentration before this timer can dismiss the creature.
+      if deferredDeletes and DB.getValue(node,"qs_break_hostile",0)==1
+          and DB.findNode(DB.getValue(node,"qs_duration","")) then return end
       return advanceTimer(effect,actor,kind)
     end
     -- Keep the caster's linked concentration timer on the same rest clock.
@@ -144,6 +167,7 @@ function onInit()
     restSeen=restSeen or {}
     -- Apply the same elapsed time to owned summons when only their caster rests.
     -- Process first: caster concentration expiry can delete summons during rest.
+    breakRestConcentration(actor)
     advanceOwned(actor,kind,false)
     local ok,result=pcall(normalActorRest,actor,kind)
     restSeen=outer

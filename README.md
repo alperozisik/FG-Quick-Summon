@@ -13,7 +13,7 @@ Summon and manage creatures from the **Actions** tab in **Fantasy Grounds Unity 
 3. Enable **Quick Summon** in the campaign launcher. Use a **5E Legacy** campaign and load the NPC modules you want to use on the GM side.
 4. Enable [Initiative Nanny](https://forge.fantasygrounds.com/shop/items/2089/view) if you want `AFTERTURN` and `SHARETURN` to control initiative order.
 
-The chat announces **Quick Summon v0.1.22 loaded.** with the extension icon. For updates to an open campaign, replace the package and use `/reload` when you are ready.
+The chat announces **Quick Summon v0.1.23 loaded.** with the extension icon. For updates to an open campaign, replace the package and use `/reload` when you are ready.
 
 ## Casting a spell
 
@@ -28,6 +28,7 @@ The chat announces **Quick Summon v0.1.22 loaded.** with the extension icon. For
 
 - **Refresh** rescans the host’s loaded NPC modules and updates slot availability. It clears the current creature selection.
 - **Select randomly** appears when at least two eligible choices are available. The result stays editable and waits for **Confirm**. For **Animate Objects**, it finds a combination that spends the entire size budget when possible and otherwise uses the highest reachable amount.
+- **Conjure Elemental** filters the GM’s list by the caster’s selected Air/Earth/Fire/Water option as well as creature type and slot-based CR. Explicit element tags and whole-word names are supported, along with known Legacy elemental families (including mixed mephits). Records whose element cannot be established are excluded; custom creatures should include an element tag such as `Elemental (air)`. This filter does not restrict Conjure Minor Elementals.
 - The GM can open an NPC’s source sheet using the shortcut to the left of its name. The player’s list shows creature names, types, and CRs where available. It contains no links to the source sheets.
 - The catalogue includes modules loaded by the GM, including modules the player cannot open. Eligible creature names from those modules can appear in a player’s chooser.
 - A matching NPC record must be present in a loaded module. Some spirit forms use named templates supplied by the corresponding rules module or an automation module. The extension contains the rules and artwork used to run the flow.
@@ -46,6 +47,7 @@ The chat announces **Quick Summon v0.1.22 loaded.** with the extension icon. For
 - A temporary summon carries a **Summoned Creature** effect with its remaining duration in rounds. Expiring or removing this effect dismisses the summon from the Combat Tracker and removes its linked Pets record. Duration advances through FG turns and rest commands, rather than real-world elapsed time.
 - Timer initiative is captured from the **active CT actor when casting starts**, including reaction casts on another actor’s turn. Later chooser steps retain that value. Spiritual Weapon expires at turn end: its Initiative Adjust is the captured value minus **0.1** (for example, 13 becomes 12.9). This applies to newly started casts; existing timers retain their initiative.
 - Short rest subtracts **1 hour**; long rest subtracts **8 hours**. Both party rest and the caster’s individual rest are supported, including a rest started on the player’s character sheet. A party rest decrements each timer once.
+- For **Conjure Elemental** and **Conjure Fey**, a caster’s short or long rest breaks concentration **before** elapsed time is applied: the creature remains on the CT as hostile, loses its Summoned Creature timer, and leaves Pets. This also works if party rest visits the summon before the caster.
 - Concentration remains linked to the caster. If concentration loss turns a creature hostile, its Summoned Creature effect is removed **without dismissing it**, and the GM takes over. Special delayed disappearance remains a GM ruling.
 - Permanent creations, familiars, and steeds do not receive a temporary lifetime timer. A creature brought through Gate stays when the portal ends. Animate Dead/Create Undead control limits are distinct from creature lifetimes and remain manual. Druid Grove guardians receive the ordinary 24-hour grove duration; the GM handles permanent groves separately.
 - On reload, existing managed summon sheets are locked, Spiritual Weapon regains a missing Incapacitated effect, and any existing linked duration is transferred to a Summoned Creature timer using its remaining rounds.

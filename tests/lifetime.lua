@@ -79,6 +79,7 @@ end
 CombatManager.rest=function(kind)
   local snapshot={}
   for _,n in pairs(combatants) do snapshot[#snapshot+1]=n end
+  table.sort(snapshot,function(a,b) return (a.values.qs_cast or "")>(b.values.qs_cast or "") end)
   for _,n in ipairs(snapshot) do
     assert(nodes[n.path],"Party rest must not iterate deleted combatants")
     EffectManagerD20.clearRestExpiringEffectsByActor(n,kind)
@@ -219,6 +220,24 @@ QuickSummonLifetime.restCaster(char,"short")
 assert(e.values.nDuration==600)
 QuickSummon.notifySummonRest(char,"short")
 assert(removed==1,"Manager rest command must reach the host lifetime handler")
+
+-- Rest must break Conjure Elemental/Fey control before expiring their timers,
+-- including the worst-case party iteration order: summon before caster.
+handlers[#handlers+1]={"combattracker.list.*.effects.*","onDelete",concentrationDeleted}
+for _,kind in ipairs({"short","long"}) do
+  for _,mode in ipairs({"party","caster","player"}) do
+    reset(); char,pc=caster(); n,e=summon(60)
+    n.values.qs_break_hostile=1
+    source=EffectManager.addEffectByTable(pc,{sName="Conjure Elemental (C)",nDuration=600})
+    n.values.qs_duration=source.path
+    if mode=="party" then CombatManager.rest(kind)
+    elseif mode=="caster" then EffectManagerD20.clearRestExpiringEffectsByActor(pc,kind)
+    else QuickSummonLifetime.restCaster(char,kind) end
+    assert(nodes[n.path] and removed==0,"Rest must retain the hostile summon")
+    assert(n.values.friendfoe=="foe" and n.values.qs_timer=="" and n.values.qs_duration=="")
+    assert(not nodes[e.path] and not nodes[source.path])
+  end
+end
 
 -- Player-side rest forwards once; managed effects are not also decremented locally.
 reset(); char,pc=caster(); n,e=summon(120)

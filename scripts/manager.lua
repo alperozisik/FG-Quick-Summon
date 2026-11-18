@@ -149,7 +149,7 @@ local function getCandidates(cast)
   for _,npc in ipairs(all) do
     local accepted = false
     if p.mode=="catalog" then
-      accepted=QuickSummonRules.eligibility(p,npc,cast.cap)
+      accepted=QuickSummonRules.eligibility(p,npc,cast.cap,cast.option)
     elseif p.mode=="fixed" then
       accepted=names[npc.normalized] and not npc.isTemplate
     elseif p.mode=="undead" then
@@ -672,8 +672,9 @@ local function pickStage(cast,force)
   if p.mode=="objects" then cast.quantity=cast.budget end
   local rows=getCandidates(cast)
   if #rows==0 then
+    local wanted=p.elementalForms and (p.forms[cast.option].." elementals") or "NPCs"
     publish(cast,"pick",p.chooser=="gm" and "gm" or "caster",{},
-      "No eligible NPCs in the currently loaded modules. Load a matching module and use Refresh.")
+      "No eligible "..wanted.." in the currently loaded modules. Load a matching module and use Refresh.")
     return
   end
   local variable=allowsPartialSelection(p)
@@ -694,6 +695,7 @@ local function pickStage(cast,force)
   elseif cast.cap then
     message="CR ≤ "..QuickSummonRules.crText(cast.cap)
   end
+  if p.elementalForms then message=p.forms[cast.option].." elementals · "..message end
   local role=p.chooser=="gm" and "gm" or "caster"
   publish(cast,"pick",role,rows,message)
 end
@@ -899,7 +901,8 @@ end
 local function onEffectDeleted(node)
   local path=DB.getPath(node)
   -- CoreRPG deletes a normally expiring effect with one round still stored.
-  local early=EffectVarManager.getEffectVarFromNode(node,"nDuration",0)>1
+  local early=DB.getValue(node,"qs_rest_break",0)==1
+    or EffectVarManager.getEffectVarFromNode(node,"nDuration",0)>1
   local spell=EffectVarManager.getEffectVarFromNode(node,"sName",""):match("^(.-) %(")
   local linked={}
   for _,entry in pairs(CombatManager.getCombatantNodes()) do
