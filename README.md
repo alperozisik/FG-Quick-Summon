@@ -35,7 +35,7 @@ The chat announces **Quick Summon v0.1.24 loaded.** with the extension icon. For
 
 ## Combat Tracker and ownership
 
-- With **Pets** loaded and auto assignment On, friendly summons are added to the caster’s Pets list as the actual NPC record linked to the tracker. Removing a summon from the tracker also removes its Pets entry. A summon that becomes hostile on concentration loss leaves Pets and remains under GM control. Pets is optional; the normal workflow works without it. This applies to newly created summons.
+- With [Pets](https://forge.fantasygrounds.com/shop/items/1960/view) loaded and auto assignment On, friendly summons are added to the caster’s Pets list as the actual NPC record linked to the tracker. Removing a summon from the tracker also removes its Pets entry. A summon that becomes hostile on concentration loss leaves Pets and remains under GM control. Pets is optional; the normal workflow works without it. This applies to newly created summons.
 - **Options → Quick Summon → Auto Assign Summoned NPC** defaults to **On**. Friendly summons are assigned to the player who controls the caster, and their Combat Tracker-linked NPC sheet is shared with and opened for that player in its locked state. Set it to **Off** to assign them manually.
 - If the caster already has initiative, the summon uses the spell’s initiative behavior. Spells can roll individually, roll once for the summoned group, or use the caster’s value. Quick Summon supplies the caster link for `AFTERTURN` and `SHARETURN` effects.
 - **Find Familiar** adds a persistent `Familiar` effect to the new CT entry.
@@ -46,7 +46,7 @@ The chat announces **Quick Summon v0.1.24 loaded.** with the extension icon. For
 
 - **Warn before auto unsummon** defaults to **Yes**. The GM sees the affected summons and the known reason. **Unsummon** removes the group, while **Ignore** leaves the creatures on the tracker for manual management. **No** removes them immediately.
 - **`/undounsummon`** restores the last group removed by Quick Summon, including current HP, conditions, initiative, and available Pets and map links. The history exists only in host memory. Manual tracker deletions are outside that history. Expired concentration and summon timers are not restored.
-- Polymorphism CT swaps carry the same concentration cast identity across forms. Quick Summon also includes a compatibility hook for 5e Undo Last Damage/Heal that preserves the Wild Shape effect when undoing damage on the current form.
+- [Polymorphism](https://forge.fantasygrounds.com/shop/items/156/view) CT swaps carry the same concentration cast identity across forms. Quick Summon also includes a compatibility hook for [5e Undo Last Damage/Heal](https://forge.fantasygrounds.com/shop/items/719/view) that preserves the Wild Shape effect when undoing damage on the current form.
 
 **Live verification for v0.1.24.** In Fantasy Grounds 5.1.16, a summon and its concentration effect survived entering and leaving Wild Shape. The confirmation correctly identified a replacement spell and a failed concentration save. Ignore, Unsummon, and single-summon restoration worked. The summon lost its AFTERTURN effect on transformation. 5e Undo preserved Wild Shape and reported success, but the form retained 12 wounds. Bulk restoration and restoration of a map token or Pets entry still need live verification.
 

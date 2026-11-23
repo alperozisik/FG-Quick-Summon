@@ -2,6 +2,7 @@
 
 - This checkout is the source of truth for Quick Summon. Release instructions apply to the maintainer. External contributions go through pull requests.
 - Every release must update GitHub and the local Fantasy Grounds extension. Keep the manifest version, load announcement, both READMEs, and changelog in sync.
+- Link each named third-party extension to its Fantasy Grounds Forge listing at least once per documentation file where it appears.
 - Regenerate `docs/assets/spell-icons-preview.png` when the spell artwork changes. Keep map-token assets separate from the extension archive.
 - Run `python build_release.py --tag vX.Y.Z` and the relevant behavior checks before release.
 - Install `release/QuickSummon.ext` in the Fantasy Grounds `extensions` directory and verify its checksum. Update `tokens/QuickSummon/Spiritual_Weapon.png` if the artwork changed. The user controls `/reload`.

@@ -27,7 +27,7 @@ Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.24 loaded.** mesajı g
 
 ## Combat Tracker
 
-- **Pets** yüklüyse ve otomatik atama açıksa yeni dost summon, caster’ın Pets listesine CT’ye bağlı NPC kaydı olarak eklenir. Summon CT’den kaldırıldığında Pets kaydı da silinir. Konsantrasyon kaybıyla düşmana dönerse Pets’ten çıkar ve DM kontrolünde kalır. Pets yüklü değilse normal akış devam eder.
+- [Pets](https://forge.fantasygrounds.com/shop/items/1960/view) yüklüyse ve otomatik atama açıksa yeni dost summon, caster’ın Pets listesine CT’ye bağlı NPC kaydı olarak eklenir. Summon CT’den kaldırıldığında Pets kaydı da silinir. Konsantrasyon kaybıyla düşmana dönerse Pets’ten çıkar ve DM kontrolünde kalır. Pets yüklü değilse normal akış devam eder.
 - **Options → Quick Summon → Auto Assign Summoned NPC**, varsayılan **On** ayarıyla dost summon’ı caster’ı kontrol eden oyuncuya verir; CT’deki NPC sayfasını o oyuncuyla paylaşır ve oyuncunun ekranında **kilitli** açar.
 - Caster’ın initiative’i varsa büyünün kuralına göre bireysel zar, grup zarı veya caster’ın initiative değeri kullanılır.
 - **Find Familiar** ile gelen kayda `Familiar` efekti eklenir.
@@ -38,7 +38,7 @@ Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.24 loaded.** mesajı g
 
 - **Warn before auto unsummon** varsayılan olarak **Yes**. DM kaldırılacak grubu ve belirlenebilen nedeni görür. **Unsummon** grubu kaldırır. **Ignore** yaratıkları elle yönetmek üzere CT'de bırakır. **No** seçilirse kaldırma doğrudan yapılır.
 - DM, **`/undounsummon`** ile Quick Summon'ın kaldırdığı son grubu HP, condition, initiative ve erişilebilir Pets/harita bağlantılarıyla geri yükler. Bellek oturuma aittir. Elle silinen CT kayıtları bu kapsamın dışındadır. Bitmiş konsantrasyon ve summon sayaçları geri yüklenmez.
-- Wild Shape sırasında taşınan konsantrasyon efekti aynı cast olarak izlenir. 5e Undo uyumluluk katmanı, mevcut formda hasar geri alınırken Wild Shape efektini korur.
+- [Polymorphism](https://forge.fantasygrounds.com/shop/items/156/view) ile Wild Shape sırasında taşınan konsantrasyon efekti aynı cast olarak izlenir. [5e Undo Last Damage/Heal](https://forge.fantasygrounds.com/shop/items/719/view) uyumluluk katmanı, mevcut formda hasar geri alınırken Wild Shape efektini korur.
 
 **v0.1.24 canlı test sonucu.** Fantasy Grounds 5.1.16'da summon ve konsantrasyon efekti Wild Shape'e girip çıkarken korundu. Onay penceresi yeni büyüyü ve başarısız konsantrasyon zarını doğru gösterdi. Ignore, Unsummon ve tek summon'ı geri getirme çalıştı. Dönüşümde summon'ın AFTERTURN efekti kayboldu. 5e Undo Wild Shape'i koruyup başarı mesajı verdi, ancak formda 12 wound kaldı. Toplu geri yükleme, harita token'ı ve Pets kaydının geri kurulması canlı test bekliyor.
 

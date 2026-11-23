@@ -2,10 +2,10 @@
 
 ## [0.1.24] - 2026-11-23
 
-- Preserve summon concentration links across Polymorphism CT swaps and recognize the original caster in Wild Shape.
+- Preserve summon concentration links across [Polymorphism](https://forge.fantasygrounds.com/shop/items/156/view) CT swaps and recognize the original caster in Wild Shape.
 - Identify failed concentration saves, replacement spells, fatal or dropping damage, duration expiry, and unclassified removals in the optional GM confirmation.
 - Add the host-only `/undounsummon` command for the last Quick Summon removal group, with session-only snapshots.
-- Include 5e Undo compatibility for damage undo on the current Wild Shape form.
+- Include [5e Undo Last Damage/Heal](https://forge.fantasygrounds.com/shop/items/719/view) compatibility for damage undo on the current Wild Shape form.
 
 Live check on FG 5.1.16 found two remaining issues in v0.1.24: AFTERTURN disappeared on Wild Shape activation, and 5e Undo reported completion while the form retained its wounds.
 
@@ -32,7 +32,7 @@ Live check on FG 5.1.16 found two remaining issues in v0.1.24: AFTERTURN disappe
 
 ## [0.1.20] - 2026-11-18
 
-- Integrate newly created, auto-assigned friendly summons with the optional Pets extension, using the caster’s cohort record as the Combat Tracker source.
+- Integrate newly created, auto-assigned friendly summons with the optional [Pets](https://forge.fantasygrounds.com/shop/items/1960/view) extension, using the caster’s cohort record as the Combat Tracker source.
 - Remove that Pets record when the summon leaves the tracker; detach hostile summons from Pets while retaining GM control.
 - Continue the normal summon and sheet-sharing workflow when Pets is absent.
 
