@@ -42,7 +42,7 @@ local function timer(endsTurn)
   local node={values={qs_cast_init=captured.durationInit,qs_expire_end=endsTurn and 1 or 0}}
   local result
   EffectManager={addEffectByTable=function(n,effect)
-    assert(n==node); result=effect; return {path="effect"}
+    assert(n==node); result=effect; return {path="effect",values={}}
   end}
   QuickSummonLifetime.add(node,1)
   assert(result.nDuration==10 and result.sName=="Summoned Creature")

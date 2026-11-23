@@ -59,7 +59,12 @@ local function actorRecord(cast)
 end
 
 local function casterCT(cast)
-  return ActorManager.getCTNode(actorRecord(cast))
+  local current=ActorManager.getCTNode(actorRecord(cast))
+  if current then return current end
+  local ownerPath=DB.getPath(cast.character)
+  for _,node in pairs(CombatManager.getCombatantNodes()) do
+    if DB.getValue(node,"polymorphism_originator","")==ownerPath then return node end
+  end
 end
 
 local function hasActiveInitiative(node)
@@ -638,12 +643,14 @@ local function resolve(cast, selected)
   end
   local effect
   if p.concentration then
-    ActionSave.expireConcentrationEffects(actorRecord(cast))
+    QuickSummonUnsummon.withReason("Started another concentration spell",
+      ActionSave.expireConcentrationEffects,ActorManager.resolveActor(source))
     effect=EffectManager.addEffectByTable(source,{
       sName=p.name.." (C)", nDuration=p.concentration, sUnits="minute", nInit=cast.durationInit or 0, bSkipAnnounce=true,
     })
   end
   if effect and not p.keepOnEnd then
+    DB.setValue(effect,"qs_concentration_cast","string",cast.id)
     local duration=DB.getPath(effect)
     for _,node in ipairs(added) do DB.setValue(node,"qs_duration","string",duration) end
   elseif not effect and p.concentration then
@@ -654,7 +661,13 @@ local function resolve(cast, selected)
       QuickSummonLifetime.add(node,p.concentration or p.minutes)
     end
   end
-  for _,node in ipairs(prior) do CombatManager.deleteCombatant(node) end
+  if #prior>0 then
+    QuickSummonUnsummon.batch(function()
+      for _,node in ipairs(prior) do
+        QuickSummonUnsummon.dismiss(node,"Replaced by a new casting")
+      end
+    end)
+  end
   PowerManager5E.setSpellUpcast(cast.power,cast.slot==0 and -1 or cast.slot-p.level)
   local slotMessage=cast.slot==0 and "Cast as a ritual. No spell slot spent."
     or string.format("Level %d spell slot automatically expended.",cast.slot)
@@ -898,41 +911,65 @@ local function detachPet(node)
   DB.setValue(node,"qs_pet","number",0)
 end
 
+local function transferredEffect(entry, deleted)
+  local cast=DB.getValue(entry,"qs_cast","")
+  local ownerPath=DB.getValue(entry,"qs_owner","")
+  if cast=="" or ownerPath=="" then return end
+  local oldPath=DB.getPath(deleted):match("^(.-)%.effects%.[^.]+$")
+  for _,actor in pairs(CombatManager.getCombatantNodes()) do
+    if DB.getPath(actor)~=oldPath then
+      local class,link=DB.getValue(actor,"link","","")
+      if (class=="charsheet" and link==ownerPath)
+          or DB.getValue(actor,"polymorphism_originator","")==ownerPath then
+        for _,effect in ipairs(DB.getChildList(actor,"effects")) do
+          if DB.getValue(effect,"qs_concentration_cast","")==cast then return effect end
+        end
+      end
+    end
+  end
+end
+
 local function onEffectDeleted(node)
   local path=DB.getPath(node)
-  -- CoreRPG deletes a normally expiring effect with one round still stored.
-  local early=DB.getValue(node,"qs_rest_break",0)==1
-    or EffectVarManager.getEffectVarFromNode(node,"nDuration",0)>1
+  local why=QuickSummonUnsummon.reason(node)
+  local early=why~="Duration expired"
   local spell=EffectVarManager.getEffectVarFromNode(node,"sName",""):match("^(.-) %(")
   local linked={}
   for _,entry in pairs(CombatManager.getCombatantNodes()) do
     if DB.getValue(entry,"qs_duration","")==path then linked[#linked+1]=entry end
   end
-  for _,entry in ipairs(linked) do
-    if early and DB.getValue(entry,"qs_manual_expiration",0)==1 then
-      DB.setValue(entry,"qs_duration","string","")
-      QuickSummonLifetime.clear(entry)
-      say("The GM resolves any delayed disappearance for "..DB.getValue(entry,"name","the summon")..".",spell)
-    elseif early and DB.getValue(entry,"qs_break_hostile",0)==1 then
-      detachPet(entry)
-      DB.setValue(entry,"friendfoe","string","foe")
-      QuickSummonLifetime.clear(entry)
-      DB.setValue(entry,"qs_duration","string","")
-      local character=DB.findNode(DB.getValue(entry,"qs_owner",""))
-      local user=DB.getValue(entry,"qs_assigned_user",character and owner(character) or "")
-      if user~="" then
-        DB.removeHolder(entry,user)
-        local clone=DB.findNode(DB.getValue(entry,"qs_record",""))
-        if clone then DB.removeHolder(clone,user) end
-        if DB.getValue(entry,"NPCowner","")==user then DB.setValue(entry,"NPCowner","string","") end
-        DB.setValue(entry,"qs_assigned_user","string","")
+  if #linked==0 then return end
+  QuickSummonUnsummon.forget(path)
+  QuickSummonUnsummon.batch(function()
+    for _,entry in ipairs(linked) do
+      local replacement=not why and transferredEffect(entry,node)
+      if replacement then
+        DB.setValue(entry,"qs_duration","string",DB.getPath(replacement))
+      elseif early and DB.getValue(entry,"qs_manual_expiration",0)==1 then
+        DB.setValue(entry,"qs_duration","string","")
+        QuickSummonLifetime.clear(entry)
+        say("The GM resolves any delayed disappearance for "..DB.getValue(entry,"name","the summon")..".",spell)
+      elseif early and DB.getValue(entry,"qs_break_hostile",0)==1 then
+        detachPet(entry)
+        DB.setValue(entry,"friendfoe","string","foe")
+        QuickSummonLifetime.clear(entry)
+        DB.setValue(entry,"qs_duration","string","")
+        local character=DB.findNode(DB.getValue(entry,"qs_owner",""))
+        local user=DB.getValue(entry,"qs_assigned_user",character and owner(character) or "")
+        if user~="" then
+          DB.removeHolder(entry,user)
+          local clone=DB.findNode(DB.getValue(entry,"qs_record",""))
+          if clone then DB.removeHolder(clone,user) end
+          if DB.getValue(entry,"NPCowner","")==user then DB.setValue(entry,"NPCowner","string","") end
+          DB.setValue(entry,"qs_assigned_user","string","")
+        end
+        say("Concentration ended. The GM takes control of "..DB.getValue(entry,"name","the summon")
+          .." and tracks its remaining duration.",spell)
+      else
+        QuickSummonUnsummon.dismiss(entry,why or "Concentration effect removed (reason unknown)")
       end
-      say("Concentration ended. The GM takes control of "..DB.getValue(entry,"name","the summon")
-        .." and tracks its remaining duration.",spell)
-    else
-      CombatManager.deleteCombatant(entry)
     end
-  end
+  end)
 end
 
 local function onCombatantDeleted(node)
@@ -985,6 +1022,11 @@ function onTabletopInit()
   if not Session.IsHost then return end
   -- The ruleset and extensions can rebuild CT summaries during campaign startup.
   for _,node in pairs(CombatManager.getCombatantNodes()) do
+    local concentration=DB.findNode(DB.getValue(node,"qs_duration",""))
+    local cast=DB.getValue(node,"qs_cast","")
+    if concentration and cast~="" then
+      DB.setValue(concentration,"qs_concentration_cast","string",cast)
+    end
     if isScaledSummon(node) then syncSummonActions(node) end
   end
 end

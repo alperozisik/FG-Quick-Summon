@@ -12,7 +12,10 @@ function add(node, minutes, rounds, initiative)
   local effect=EffectManager.addEffectByTable(node,{
     sName="Summoned Creature", nDuration=rounds or minutes*10, nInit=initiative, bSkipAnnounce=true,
   })
-  if effect then DB.setValue(node,"qs_timer","string",DB.getPath(effect)) end
+  if effect then
+    DB.setValue(effect,"qs_lifetime_timer","number",1)
+    DB.setValue(node,"qs_timer","string",DB.getPath(effect))
+  end
 end
 
 function clear(node)
@@ -29,7 +32,9 @@ local function onTimerDeleted(effect)
   local path=DB.getPath(node)
   if deleting[path] or DB.getValue(node,"qs_timer","")~=DB.getPath(effect) then return end
   DB.setValue(node,"qs_timer","string","")
-  CombatManager.deleteCombatant(node)
+  local why=QuickSummonUnsummon.reason(effect)
+  QuickSummonUnsummon.forget(DB.getPath(effect))
+  QuickSummonUnsummon.dismiss(node,why or "Summon timer removed (reason unknown)")
 end
 
 local function restRounds(kind)
@@ -50,6 +55,7 @@ local function advanceTimer(effect, actor, kind)
   else
     -- A rest can expire an effect while its pre-rest duration is still stored.
     -- The concentration handler must recognize this as natural expiration.
+    QuickSummonUnsummon.mark(effect,"Duration expired")
     EffectVarManager.setEffectVarToNode(effect,"nDuration",1)
     EffectManager.expireEffectByNode(actor,effect)
   end
@@ -65,9 +71,18 @@ local function isManagedEffect(effect)
   return false
 end
 
+local function casterPath(actor)
+  local resolved=ActorManager.resolveActor(actor)
+  if not resolved then return "" end
+  local caster=ActorManager.getCreatureNode(resolved)
+  local ct=ActorManager.getCTNode and ActorManager.getCTNode(resolved)
+  local originator=ct and DB.getValue(ct,"polymorphism_originator","") or ""
+  if originator:match("^charsheet%.[^.]+$") then return originator end
+  return caster and DB.getPath(caster) or ""
+end
+
 local function advanceOwned(actor,kind,includeSource)
-  local caster=ActorManager.getCreatureNode(ActorManager.resolveActor(actor))
-  local ownerPath=caster and DB.getPath(caster) or ""
+  local ownerPath=casterPath(actor)
   local timers,sources={},{}
   for _,node in pairs(CombatManager.getCombatantNodes()) do
     if ownerPath~="" and DB.getValue(node,"qs_owner","")==ownerPath then
@@ -84,8 +99,7 @@ local function advanceOwned(actor,kind,includeSource)
 end
 
 local function breakRestConcentration(actor)
-  local caster=ActorManager.getCreatureNode(ActorManager.resolveActor(actor))
-  local ownerPath=caster and DB.getPath(caster) or ""
+  local ownerPath=casterPath(actor)
   local sources={}
   for _,node in pairs(CombatManager.getCombatantNodes()) do
     if ownerPath~="" and DB.getValue(node,"qs_owner","")==ownerPath
@@ -96,7 +110,7 @@ local function breakRestConcentration(actor)
   end
   for _,source in pairs(sources) do
     -- Rest ends control before elapsed-time expiration. The creature stays hostile.
-    DB.setValue(source,"qs_rest_break","number",1)
+    QuickSummonUnsummon.mark(source,"Concentration ended during rest")
     EffectManager.expireEffectByNode(DB.getChild(source,"..."),source)
   end
 end
@@ -105,8 +119,10 @@ function restCaster(character,kind)
   if not Session.IsHost then return end
   local outer=restSeen
   restSeen=restSeen or {}
-  breakRestConcentration(character)
-  advanceOwned(character,kind,true)
+  QuickSummonUnsummon.batch(function()
+    breakRestConcentration(character)
+    advanceOwned(character,kind,true)
+  end)
   restSeen=outer
 end
 
@@ -167,9 +183,11 @@ function onInit()
     restSeen=restSeen or {}
     -- Apply the same elapsed time to owned summons when only their caster rests.
     -- Process first: caster concentration expiry can delete summons during rest.
-    breakRestConcentration(actor)
-    advanceOwned(actor,kind,false)
-    local ok,result=pcall(normalActorRest,actor,kind)
+    local ok,result=pcall(QuickSummonUnsummon.batch,function()
+      breakRestConcentration(actor)
+      advanceOwned(actor,kind,false)
+      return normalActorRest(actor,kind)
+    end)
     restSeen=outer
     if not ok then error(result) end
     return result
@@ -181,7 +199,7 @@ function onInit()
     local outerDeletes=deferredDeletes
     restSeen=restSeen or {}
     deferredDeletes=deferredDeletes or {}
-    local ok,result=pcall(normalPartyRest,...)
+    local ok,result=pcall(QuickSummonUnsummon.batch,normalPartyRest,...)
     local pending=deferredDeletes
     deferredDeletes=outerDeletes
     restSeen=outer
@@ -213,6 +231,8 @@ function onTabletopInit()
           EffectManager.addEffectByTable(node,{sName="Incapacitated",nDuration=0,bSkipAnnounce=true})
         end
       end
+      local timer=DB.findNode(DB.getValue(node,"qs_timer",""))
+      if timer then DB.setValue(timer,"qs_lifetime_timer","number",1) end
       -- Migrate existing summons using the remaining rounds, never a fresh duration.
       if DB.getValue(node,"qs_timer","")=="" then
         local source=DB.findNode(DB.getValue(node,"qs_duration",""))

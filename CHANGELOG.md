@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.24] - 2026-11-23
+
+- Preserve summon concentration links across Polymorphism CT swaps and recognize the original caster in Wild Shape.
+- Identify failed concentration saves, replacement spells, fatal or dropping damage, duration expiry, and unclassified removals in the optional GM confirmation.
+- Add the host-only `/undounsummon` command for the last Quick Summon removal group, with session-only snapshots.
+- Include 5e Undo compatibility for damage undo on the current Wild Shape form.
+
 ## [0.1.23] - 2026-11-18
 
 - Filter Conjure Elemental GM candidates by the caster’s selected element, retaining type, CR/upcast, swarm and template restrictions. Support explicit element tags, element names, and known Legacy elemental families; omit unclassified records.
@@ -51,3 +58,5 @@ First GitHub release.
 [0.1.22]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.22
 
 [0.1.23]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.23
+
+[0.1.24]: https://github.com/alperozisik/FG-Quick-Summon/releases/tag/v0.1.24

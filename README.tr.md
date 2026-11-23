@@ -11,7 +11,7 @@
 3. Kampanya başlatıcısında **Quick Summon**’ı etkinleştir. GM tarafında kullanılacak NPC modüllerini yükle.
 4. `AFTERTURN` ve `SHARETURN` ile sıralamayı uygulamak için [Initiative Nanny](https://forge.fantasygrounds.com/shop/items/2089/view) eklentisini etkinleştir.
 
-Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.23 loaded.** mesajı görünür. Açık kampanyada paketi değiştirdikten sonra uygun zamanda `/reload` kullanabilirsin.
+Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.24 loaded.** mesajı görünür. Açık kampanyada paketi değiştirdikten sonra uygun zamanda `/reload` kullanabilirsin.
 
 ## Çağırma akışı
 
@@ -33,6 +33,12 @@ Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.23 loaded.** mesajı g
 - **Find Familiar** ile gelen kayda `Familiar` efekti eklenir.
 - **Spiritual Weapon**, `SHARETURN` ile caster’ın turunu paylaşır. **Spiritual Weapon Strike** bonus action’ı NPC sayfası ve CT’de saldırı ve force hasarı atışları sunar. Üzerinde `Incapacitated` ve `NOREACTION` bulunur. Slot 2 ve 3 mesajları aynı temel 1d8 hasarı gösterir; slot 4, 6 ve 8’de birer d8 eklenir.
 - Ölçeklenen ruhlar AC, HP, caster spell attack, save DC ve proficiency değerlerini kullanır. Yüklü modüldeki stat bloğunun metin yapısı, aksiyon metninin ne kadarının otomatik ölçeklenebildiğini belirler.
+
+## Unsummon ve geri alma
+
+- **Warn before auto unsummon** varsayılan olarak **Yes**. DM kaldırılacak grubu ve belirlenebilen nedeni görür. **Unsummon** grubu kaldırır. **Ignore** yaratıkları elle yönetmek üzere CT'de bırakır. **No** seçilirse kaldırma doğrudan yapılır.
+- DM, **`/undounsummon`** ile Quick Summon'ın kaldırdığı son grubu HP, condition, initiative ve erişilebilir Pets/harita bağlantılarıyla geri yükler. Bellek oturuma aittir. Elle silinen CT kayıtları bu kapsamın dışındadır. Bitmiş konsantrasyon ve summon sayaçları geri yüklenmez.
+- Wild Shape sırasında taşınan konsantrasyon efekti aynı cast olarak izlenir. 5e Undo uyumluluk katmanı, mevcut formda hasar geri alınırken Wild Shape efektini korur.
 
 ## Süreler ve rest
 

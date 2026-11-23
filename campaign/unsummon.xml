@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <windowclass name="quicksummon_unsummon">
+    <frame>utilitybox</frame>
+    <windowmenu><nolink /></windowmenu>
+    <placement><size width="560" height="330" /><nosave /></placement>
+    <script>
+      function refresh()
+        title.setValue("Confirm Unsummon")
+        summons.setValue(QuickSummonUnsummon.describe())
+      end
+      function onClose()
+        QuickSummonUnsummon.closed()
+      end
+    </script>
+    <sheetdata>
+      <windowtitlebar_utilitybox name="title" /><windowmenubar_utilitybox name="menubar" />
+      <stringcontrol name="warning">
+        <bounds>24,45,-24,60</bounds>
+        <font>sheettext</font><readonly /><multilinespacing>18</multilinespacing>
+        <static>Removing these summons clears their HP and conditions from the Combat Tracker. The last removal can be restored this session with /undounsummon.</static>
+      </stringcontrol>
+      <stringcontrol name="summons">
+        <bounds>24,111,-24,154</bounds>
+        <font>sheettext</font><readonly /><multilinespacing>18</multilinespacing>
+      </stringcontrol>
+      <button_text name="ignore">
+        <bounds>-256,-48,108,30</bounds><state text="Ignore" />
+        <script>function onButtonPress() QuickSummonUnsummon.decide(false); end</script>
+      </button_text>
+      <button_text name="unsummon">
+        <bounds>-142,-48,118,30</bounds><state text="Unsummon" />
+        <script>
+          function onInit() setColor("FFFF5252"); end
+          function onButtonPress() QuickSummonUnsummon.decide(true); end
+        </script>
+      </button_text>
+    </sheetdata>
+  </windowclass>
+</root>
+

@@ -13,7 +13,7 @@ Summon and manage creatures from the **Actions** tab in **Fantasy Grounds Unity 
 3. Enable **Quick Summon** in the campaign launcher. Use a **5E Legacy** campaign and load the NPC modules you want to use on the GM side.
 4. Enable [Initiative Nanny](https://forge.fantasygrounds.com/shop/items/2089/view) if you want `AFTERTURN` and `SHARETURN` to control initiative order.
 
-The chat announces **Quick Summon v0.1.23 loaded.** with the extension icon. For updates to an open campaign, replace the package and use `/reload` when you are ready.
+The chat announces **Quick Summon v0.1.24 loaded.** with the extension icon. For updates to an open campaign, replace the package and use `/reload` when you are ready.
 
 ## Casting a spell
 
@@ -41,6 +41,12 @@ The chat announces **Quick Summon v0.1.23 loaded.** with the extension icon. For
 - **Find Familiar** adds a persistent `Familiar` effect to the new CT entry.
 - **Spiritual Weapon** shares the caster’s turn through `SHARETURN`. Its **Spiritual Weapon Strike** bonus action appears in the NPC sheet and CT with the caster’s spell attack bonus, force damage, and Legacy upcast scaling. Slot 2 and 3 notices show the same base 1d8 damage; another d8 is gained at slots 4, 6, and 8. Its movement is 20 ft. and the CT entry carries `Incapacitated` and `NOREACTION`. The caster must be on the tracker.
 - Scaled spirits use the selected slot for AC and hit points and take their spell attack bonus, save DC, and proficiency from the caster. How much action text can be scaled depends on the module’s stat block wording.
+
+## Unsummon and undo
+
+- **Warn before auto unsummon** defaults to **Yes**. The GM sees the affected summons and the known reason. **Unsummon** removes the group, while **Ignore** leaves the creatures on the tracker for manual management. **No** removes them immediately.
+- **`/undounsummon`** restores the last group removed by Quick Summon, including current HP, conditions, initiative, and available Pets and map links. The history exists only in host memory. Manual tracker deletions are outside that history. Expired concentration and summon timers are not restored.
+- Polymorphism CT swaps carry the same concentration cast identity across forms. Quick Summon also includes a compatibility hook for 5e Undo Last Damage/Heal that preserves the Wild Shape effect when undoing damage on the current form.
 
 ## Summon duration and rests
 
