@@ -7,6 +7,8 @@
 - Add the host-only `/undounsummon` command for the last Quick Summon removal group, with session-only snapshots.
 - Include 5e Undo compatibility for damage undo on the current Wild Shape form.
 
+Live check on FG 5.1.16 found two remaining issues in v0.1.24: AFTERTURN disappeared on Wild Shape activation, and 5e Undo reported completion while the form retained its wounds.
+
 ## [0.1.23] - 2026-11-18
 
 - Filter Conjure Elemental GM candidates by the caster’s selected element, retaining type, CR/upcast, swarm and template restrictions. Support explicit element tags, element names, and known Legacy elemental families; omit unclassified records.

@@ -40,6 +40,8 @@ Yüklemede chat’te eklenti ikonuyla **Quick Summon v0.1.24 loaded.** mesajı g
 - DM, **`/undounsummon`** ile Quick Summon'ın kaldırdığı son grubu HP, condition, initiative ve erişilebilir Pets/harita bağlantılarıyla geri yükler. Bellek oturuma aittir. Elle silinen CT kayıtları bu kapsamın dışındadır. Bitmiş konsantrasyon ve summon sayaçları geri yüklenmez.
 - Wild Shape sırasında taşınan konsantrasyon efekti aynı cast olarak izlenir. 5e Undo uyumluluk katmanı, mevcut formda hasar geri alınırken Wild Shape efektini korur.
 
+**v0.1.24 canlı test sonucu.** Fantasy Grounds 5.1.16'da summon ve konsantrasyon efekti Wild Shape'e girip çıkarken korundu. Onay penceresi yeni büyüyü ve başarısız konsantrasyon zarını doğru gösterdi. Ignore, Unsummon ve tek summon'ı geri getirme çalıştı. Dönüşümde summon'ın AFTERTURN efekti kayboldu. 5e Undo Wild Shape'i koruyup başarı mesajı verdi, ancak formda 12 wound kaldı. Toplu geri yükleme, harita token'ı ve Pets kaydının geri kurulması canlı test bekliyor.
+
 ## Süreler ve rest
 
 - Süreli summon’ın üzerinde **Summoned Creature** efekti bulunur. Bu efekt bittiğinde veya kaldırıldığında summon CT’den ve bağlı Pets kaydından silinir. Süre FG turları ve rest komutlarıyla ilerler; gerçek zaman sayacı değildir.

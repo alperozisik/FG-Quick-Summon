@@ -48,6 +48,8 @@ The chat announces **Quick Summon v0.1.24 loaded.** with the extension icon. For
 - **`/undounsummon`** restores the last group removed by Quick Summon, including current HP, conditions, initiative, and available Pets and map links. The history exists only in host memory. Manual tracker deletions are outside that history. Expired concentration and summon timers are not restored.
 - Polymorphism CT swaps carry the same concentration cast identity across forms. Quick Summon also includes a compatibility hook for 5e Undo Last Damage/Heal that preserves the Wild Shape effect when undoing damage on the current form.
 
+**Live verification for v0.1.24.** In Fantasy Grounds 5.1.16, a summon and its concentration effect survived entering and leaving Wild Shape. The confirmation correctly identified a replacement spell and a failed concentration save. Ignore, Unsummon, and single-summon restoration worked. The summon lost its AFTERTURN effect on transformation. 5e Undo preserved Wild Shape and reported success, but the form retained 12 wounds. Bulk restoration and restoration of a map token or Pets entry still need live verification.
+
 ## Summon duration and rests
 
 - A temporary summon carries a **Summoned Creature** effect with its remaining duration in rounds. Expiring or removing this effect dismisses the summon from the Combat Tracker and removes its linked Pets record. Duration advances through FG turns and rest commands, rather than real-world elapsed time.
